@@ -1,0 +1,287 @@
+================================================================
+       COURSE WITHDRAWAL APPLICATION - INSTRUCTIONS GUIDE
+================================================================
+
+Platform    : NetBeans IDE
+Language    : Java (Swing/AWT)
+Database    : MySQL (studentsdata)
+
+================================================================
+SECTION 1 - PREREQUISITES
+================================================================
+
+Make sure the following are installed before running the project:
+
+  1. Java Development Kit (JDK) - version 8 or higher
+  2. NetBeans IDE - version 12 or higher recommended
+  3. MySQL Server - version 5.7 or higher
+  4. MySQL Connector/J (JDBC Driver)
+       File: mysql-connector-java-x.x.xx.jar
+       Download from: https://dev.mysql.com/downloads/connector/j/
+  5. MySQL Workbench (optional - for easier database management)
+
+================================================================
+SECTION 2 - DATABASE SETUP
+================================================================
+
+Step 1 - Start MySQL Server
+  - Open MySQL Workbench or MySQL Command Line Client
+  - Make sure your MySQL server is running
+
+Step 2 - Create the Database
+  Run the following command:
+
+    CREATE DATABASE studentsdata;
+    USE studentsdata;
+
+Step 3 - Create All Tables
+  Run all SQL statements from the file: sql_tables.txt
+  (Run them one by one in order)
+
+Step 4 - Insert Default Policy Row
+  The policies table MUST have one row to work properly.
+  Run this after creating the policies table:
+
+    INSERT INTO policies (keyColumn, allPolicies, deadline)
+    VALUES (
+      1,
+      '1. Withdrawal Guidelines
+    1.1 Full-time students are permitted to withdraw from one course per semester.
+    1.2 The withdrawal request must be submitted before final examinations.
+    1.3 Withdrawal will not be treated as a failure on the transcript.
+    2. Absence-Based Restrictions
+    2.1 Withdrawal is not permitted if absences exceed:
+       - 6 absences in a regular semester
+       - 4 absences in 28-session courses
+       - 3 absences in summer session
+    3. First Semester Restrictions
+    3.1 Withdrawal is prohibited for English and Mathematics in first semester.',
+      '2024-09-16'
+    );
+
+Step 5 - Insert Sample Student Data (for testing)
+  Run this to add a test student:
+
+    INSERT INTO students VALUES
+    ('023-23-0072', 'Rida Ayaz', 'rida@iba-suk.edu.pk', 'password123', 2.30, 3, 'Computer Science');
+
+  Then add sample courses and enrollments from sql_tables.txt
+
+================================================================
+SECTION 3 - NETBEANS PROJECT SETUP
+================================================================
+
+Step 1 - Open the Project
+  1. Open NetBeans IDE
+  2. Go to: File > Open Project
+  3. Navigate to the project folder
+  4. Select it and click Open Project
+
+Step 2 - Add the MySQL JDBC Driver
+  1. In the Projects panel, right-click the project name
+  2. Select: Properties
+  3. Go to: Libraries (left side panel)
+  4. Click: Add JAR/Folder
+  5. Navigate to mysql-connector-java-x.x.xx.jar
+  6. Select the file and click Open
+  7. Click OK to save
+
+Step 3 - Configure Database Connection
+  Open the main file: WithdrawApplication.java
+  Find the database connection code and update it:
+
+    connect = DriverManager.getConnection(
+        "jdbc:mysql://localhost:3306/studentsdata",
+        "root",          // <-- replace with your MySQL username
+        "yourpassword"   // <-- replace with your MySQL password
+    );
+
+  Save the file after making changes.
+
+Step 4 - Build the Project
+  Press F11
+  OR go to: Build > Build Project
+  Make sure there are no errors in the Output panel.
+
+Step 5 - Run the Project
+  Press F6
+  OR go to: Run > Run Project
+  The Login Page will appear on screen.
+
+================================================================
+SECTION 4 - LOGIN CREDENTIALS
+================================================================
+
+  STUDENT LOGIN:
+  --------------
+  Student ID : Use any student_id you inserted into the students table
+  Password   : Use the password you set during data insertion
+  Example ID : 023-23-0072
+  Example PW : password123
+
+  ADMIN LOGIN:
+  ------------
+  Admin ID   : Admin
+  Password   : 123
+
+================================================================
+SECTION 5 - HOW TO USE (STUDENT)
+================================================================
+
+Step 1 - Run the application
+Step 2 - Enter your Student ID and Password on the Login Page
+         - If invalid: an error dialog will appear
+         - If valid: you will be taken to the Student Dashboard
+
+Step 3 - Student Dashboard
+  Your name, ID, semester, and department are shown on the right.
+  There are 5 buttons available:
+
+  ---------------------------------------------------------------
+  1. VIEW COURSES
+  ---------------------------------------------------------------
+  - Shows all your enrolled courses
+  - Displays absences and presences for each course
+  - Click "View Unenrolled Courses" to see withdrawn courses
+
+  ---------------------------------------------------------------
+  2. WITHDRAW COURSE
+  ---------------------------------------------------------------
+  - Your name, ID, department, semester are auto-filled
+  - Number of allowed withdrawals is shown at the top
+
+  Withdrawal eligibility based on CGPA:
+    CGPA > 2.5        ---> can withdraw 1 course
+    CGPA 2.2 to 2.5   ---> can withdraw 2 courses
+    CGPA below 2.2    ---> cannot withdraw any course
+
+  NOTE: A pending application counts as a withdrawal
+        until it is processed by admin.
+
+  How to submit:
+    1. Select a course from the dropdown
+    2. Select a reason from the reason dropdown
+    3. If "Other" is selected, specify the reason in the text field
+    4. Click "Submit Request"
+    5. Success message will appear if submitted successfully
+
+  Errors shown if:
+    - Any required field is empty
+    - No reason is selected
+    - "Other" selected but text field is empty
+
+  ---------------------------------------------------------------
+  3. TRACK APPLICATION
+  ---------------------------------------------------------------
+  - Shows all withdrawal requests you have submitted
+  - Displays: Name, ID, Department, Course, Reason, Status
+  - Status can be: Pending / Approved / Rejected
+
+  ---------------------------------------------------------------
+  4. VIEW POLICIES
+  ---------------------------------------------------------------
+  - Displays the current withdrawal policies set by admin
+
+  ---------------------------------------------------------------
+  5. VIEW DEADLINE
+  ---------------------------------------------------------------
+  - Shows the last date to submit a withdrawal request
+
+  ---------------------------------------------------------------
+  SIGN OUT
+  ---------------------------------------------------------------
+  - Click Sign Out button (top left)
+  - A confirmation dialog appears
+  - Click Yes to log out, No to stay on dashboard
+
+================================================================
+SECTION 6 - HOW TO USE (ADMIN)
+================================================================
+
+Step 1 - On the Login Page enter:
+         ID       : Admin
+         Password : 123
+
+Step 2 - Admin Dashboard
+  4 buttons are available:
+
+  ---------------------------------------------------------------
+  1. VIEW STUDENT DETAILS
+  ---------------------------------------------------------------
+  - Select a semester (1 through 8) to view students
+  - A table shows: ID, Name, Email, Department, Semester, CGPA
+  - Click "View Enrollments" and enter a Student ID
+  - Shows all courses enrolled by that student with status
+
+  ---------------------------------------------------------------
+  2. VIEW APPLICATIONS
+  ---------------------------------------------------------------
+  - Select a semester to view withdrawal requests for that semester
+  - A table shows all pending requests
+  - Click on a request row to process it
+  - A dialog appears with Accept and Reject buttons:
+      Accept --> request status becomes Approved
+      Reject --> request status becomes Rejected
+
+  ---------------------------------------------------------------
+  3. EDIT DEADLINE
+  ---------------------------------------------------------------
+  - Current deadline is displayed
+  - Edit the date in the text field
+  - Click "Apply Changes" to save
+  - Success message appears when saved
+
+  ---------------------------------------------------------------
+  4. EDIT POLICIES
+  ---------------------------------------------------------------
+  - Current policies are displayed in a text area
+  - Edit the policy text as needed
+  - Click "Apply Changes" to save
+  - Success message appears when saved
+
+  ---------------------------------------------------------------
+  SIGN OUT
+  ---------------------------------------------------------------
+  - Click Sign Out (top left)
+  - Confirm with Yes to go back to Login Page
+
+================================================================
+SECTION 7 - TROUBLESHOOTING
+================================================================
+
+PROBLEM : Cannot connect to database
+SOLUTION:
+  - Make sure MySQL server is running
+  - Double-check username and password in WithdrawApplication.java
+  - Make sure the database 'studentsdata' exists
+  - Make sure mysql-connector-java.jar is added to project libraries
+
+PROBLEM : Table not found / SQL errors on startup
+SOLUTION:
+  - Run all CREATE TABLE statements from sql_tables.txt again
+  - Make sure you used: USE studentsdata; first
+
+PROBLEM : Student login not working
+SOLUTION:
+  - Make sure you inserted at least one row into the students table
+  - Check that student_id and password match exactly
+
+PROBLEM : Admin login not working
+SOLUTION:
+  - ID must be exactly:  Admin  (capital A)
+  - Password must be:    123
+
+PROBLEM : Back button not working / navigation broken
+SOLUTION:
+  - The app uses a Stack to track frames
+  - Restart the application if navigation breaks unexpectedly
+
+PROBLEM : Build errors in NetBeans
+SOLUTION:
+  - Make sure JDK 8 or higher is set as the Java platform
+  - Go to Tools > Java Platforms to verify
+  - Re-add the JDBC jar if it shows as missing in Libraries
+
+================================================================
+                      END OF INSTRUCTIONS
+================================================================
