@@ -102,7 +102,7 @@ For clone use this link : https://github.com/RadhikaKapoor383/Course-Withdrawal-
  
 ---
  
-## 📄 Additional Files
+## Additional Files
  
 - `instructions.txt` — Full setup and usage guide
 - `sql_tables.txt` — All SQL CREATE TABLE and INSERT statements
